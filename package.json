@@ -2,7 +2,11 @@
   "name": "tailwind-to-inline",
   "version": "1.0.0",
   "description": "Utility to convert Tailwind-styled HTML templates to ones with inline styles",
-  "main": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "start": "ts-node index.ts",
     "build": "tsc --outDir dist --declaration --declarationDir dist",
