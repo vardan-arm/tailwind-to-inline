@@ -31,27 +31,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.renderEmailFromTemplate = void 0;
 const fs = __importStar(require("fs"));
-const juice_1 = __importDefault(require("juice"));
-const handlebars_1 = __importDefault(require("handlebars"));
-const cheerio_1 = __importDefault(require("cheerio"));
-// import postcss from 'postcss';
-const postcss_1 = __importDefault(require("postcss"));
-const node_path_1 = __importDefault(require("node:path"));
-const tailwindcss_1 = __importDefault(require("tailwindcss"));
+const juice = require('juice');
+const Handlebars = require('handlebars');
+const cheerio = require('cheerio');
+const postcss = require('postcss');
+const path = require('path');
+const tailwindcss = require('tailwindcss');
 const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function* () {
-    const $ = cheerio_1.default.load(html);
+    const $ = cheerio.load(html);
     const classNames = new Set();
     // Extract all class names from the HTML
     $('*').each((_, element) => {
         const classes = $(element).attr('class');
         if (classes) {
-            classes.split(/\s+/).forEach(className => classNames.add(className));
+            classes.split(/\s+/).forEach((className) => classNames.add(className));
         }
     });
     // Create a dummy HTML file with all the used classes
@@ -63,11 +59,11 @@ const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function*
     </html>
   `;
     // Write the dummy HTML to a temporary file
-    const tempFilePath = node_path_1.default.join(__dirname, 'temp.html');
+    const tempFilePath = path.join(__dirname, 'temp.html');
     fs.writeFileSync(tempFilePath, dummyHTML);
     // Process the CSS with Tailwind
-    const result = yield (0, postcss_1.default)([
-        (0, tailwindcss_1.default)({
+    const result = yield postcss([
+        tailwindcss({
             content: [tempFilePath],
             // Add any custom Tailwind configuration here if needed
         })
@@ -84,14 +80,12 @@ const inlineStyles = (html) => __awaiter(void 0, void 0, void 0, function* () {
     // Add processed Tailwind CSS to the HTML
     const htmlWithStyles = `<style>${tailwindCss}</style>${html}`;
     // Use juice to inline the styles
-    return (0, juice_1.default)(htmlWithStyles, { removeStyleTags: true });
+    return juice(htmlWithStyles, { removeStyleTags: true });
 });
 const renderEmailFromTemplate = (templatePath, data) => __awaiter(void 0, void 0, void 0, function* () {
     const templateSource = fs.readFileSync(templatePath, 'utf8');
-    const template = handlebars_1.default.compile(templateSource);
+    const template = Handlebars.compile(templateSource);
     const html = template(data);
     return yield inlineStyles(html);
 });
 exports.renderEmailFromTemplate = renderEmailFromTemplate;
-// module.exports = renderEmailFromTemplate;
-// export renderEmailFromTemplate;

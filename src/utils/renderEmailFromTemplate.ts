@@ -1,11 +1,10 @@
 import * as fs from 'fs';
-import juice from 'juice';
-import Handlebars from 'handlebars';
-import cheerio from 'cheerio';
-// import postcss from 'postcss';
-import postcss from 'postcss';
-import path from "node:path";
-import tailwindcss from "tailwindcss";
+const juice = require('juice');
+const Handlebars = require('handlebars');
+const cheerio = require('cheerio');
+const postcss = require('postcss');
+const path = require('path');
+const tailwindcss = require('tailwindcss');
 
 type TRenderEmailFromTemplate = (
   template: string,
@@ -17,10 +16,10 @@ const processTailwindCSS = async (html: string) => {
   const classNames = new Set();
 
   // Extract all class names from the HTML
-  $('*').each((_, element) => {
+  $('*').each((_: any, element: HTMLElement) => {
     const classes = $(element).attr('class');
     if (classes) {
-      classes.split(/\s+/).forEach(className => classNames.add(className));
+      classes.split(/\s+/).forEach((className: string) => classNames.add(className));
     }
   });
 
@@ -70,6 +69,3 @@ export const renderEmailFromTemplate: TRenderEmailFromTemplate = async (template
   const html = template(data);
   return await inlineStyles(html);
 }
-
-// module.exports = renderEmailFromTemplate;
-// export renderEmailFromTemplate;
