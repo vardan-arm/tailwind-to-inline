@@ -31,7 +31,6 @@
     "handlebars": "^4.7.8",
     "juice": "^11.0.0",
     "postcss": "^8.4.43",
-    "tailwind-to-inline": "github:vardan-arm/tailwind-to-inline",
     "tailwindcss": "^3.4.10"
   }
 }
