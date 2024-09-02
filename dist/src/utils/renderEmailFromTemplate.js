@@ -35,6 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.renderEmailFromTemplate = void 0;
 const fs = __importStar(require("fs"));
 const juice_1 = __importDefault(require("juice"));
 const handlebars_1 = __importDefault(require("handlebars"));
@@ -91,4 +92,6 @@ const renderEmailFromTemplate = (templatePath, data) => __awaiter(void 0, void 0
     const html = template(data);
     return yield inlineStyles(html);
 });
-module.exports = renderEmailFromTemplate;
+exports.renderEmailFromTemplate = renderEmailFromTemplate;
+// module.exports = renderEmailFromTemplate;
+// export renderEmailFromTemplate;

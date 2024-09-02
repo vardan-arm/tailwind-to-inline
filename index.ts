@@ -1,1 +1,5 @@
-export * from './src/utils/renderEmailFromTemplate';
+import { renderEmailFromTemplate } from './src/utils/renderEmailFromTemplate';
+
+export {
+  renderEmailFromTemplate
+};

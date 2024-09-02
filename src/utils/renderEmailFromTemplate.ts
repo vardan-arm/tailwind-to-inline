@@ -64,11 +64,12 @@ const inlineStyles = async (html: string) => {
   return juice(htmlWithStyles, {removeStyleTags: true});
 }
 
-const renderEmailFromTemplate: TRenderEmailFromTemplate = async (templatePath, data) => {
+export const renderEmailFromTemplate: TRenderEmailFromTemplate = async (templatePath, data) => {
   const templateSource = fs.readFileSync(templatePath, 'utf8');
   const template = Handlebars.compile(templateSource);
   const html = template(data);
   return await inlineStyles(html);
 }
 
-module.exports = renderEmailFromTemplate;
+// module.exports = renderEmailFromTemplate;
+// export renderEmailFromTemplate;
