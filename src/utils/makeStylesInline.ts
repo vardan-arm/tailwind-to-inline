@@ -6,7 +6,7 @@ const postcss = require('postcss');
 const path = require('path');
 const tailwindcss = require('tailwindcss');
 
-type TRenderEmailFromTemplate = (
+type TMakeStylesInline = (
   template: string,
   placeholderValues?: { [key: string]: string }
 ) => Promise<string>;
@@ -63,7 +63,7 @@ const inlineStyles = async (html: string) => {
   return juice(htmlWithStyles, {removeStyleTags: true});
 }
 
-export const renderEmailFromTemplate: TRenderEmailFromTemplate = async (templatePath, data) => {
+export const makeStylesInline: TMakeStylesInline = async (templatePath, data) => {
   const templateSource = fs.readFileSync(templatePath, 'utf8');
   const template = Handlebars.compile(templateSource);
   const html = template(data);

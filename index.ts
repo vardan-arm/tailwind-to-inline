@@ -1,5 +1,5 @@
-import { renderEmailFromTemplate } from './src/utils/renderEmailFromTemplate';
+import { makeStylesInline } from './src/utils/makeStylesInline';
 
 export {
-  renderEmailFromTemplate
+  makeStylesInline
 };
