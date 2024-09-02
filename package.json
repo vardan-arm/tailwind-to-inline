@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "start": "ts-node index.ts",
-    "build": "tsc --outDir dist --declaration --declarationDir dist",
+    "build": "rm -rf dist && tsc --outDir dist --declaration --declarationDir dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
