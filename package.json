@@ -4,6 +4,7 @@
   "description": "Utility to convert Tailwind-styled HTML templates to ones with inline styles",
   "main": "index.ts",
   "scripts": {
+    "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -18,5 +19,13 @@
   "devDependencies": {
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "fs": "^0.0.1-security",
+    "handlebars": "^4.7.8",
+    "juice": "^11.0.0",
+    "postcss": "^8.4.43",
+    "tailwindcss": "^3.4.10"
   }
 }
