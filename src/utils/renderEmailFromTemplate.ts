@@ -1,11 +1,11 @@
 import * as fs from 'fs';
-import * as juice from 'juice';
-import * as Handlebars from 'handlebars';
-import * as cheerio from 'cheerio';
+import juice from 'juice';
+import Handlebars from 'handlebars';
+import cheerio from 'cheerio';
 // import postcss from 'postcss';
-import * as postcss from 'postcss';
-import * as path from "node:path";
-import * as tailwindcss from "tailwindcss";
+import postcss from 'postcss';
+import path from "node:path";
+import tailwindcss from "tailwindcss";
 
 type TRenderEmailFromTemplate = (
   template: string,
