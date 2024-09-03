@@ -1,13 +1,12 @@
 import * as fs from 'fs';
-import * as juice from 'juice';
-import * as Handlebars from 'handlebars';
-import * as cheerio from 'cheerio';
-// import postcss from 'postcss';
-import * as postcss from 'postcss';
-import * as path from "node:path";
-import * as tailwindcss from "tailwindcss";
+const juice = require('juice');
+const Handlebars = require('handlebars');
+const cheerio = require('cheerio');
+const postcss = require('postcss');
+const path = require('path');
+const tailwindcss = require('tailwindcss');
 
-type TRenderEmailFromTemplate = (
+type TMakeStylesInline = (
   template: string,
   placeholderValues?: { [key: string]: string }
 ) => Promise<string>;
@@ -17,10 +16,10 @@ const processTailwindCSS = async (html: string) => {
   const classNames = new Set();
 
   // Extract all class names from the HTML
-  $('*').each((_, element) => {
+  $('*').each((_: any, element: HTMLElement) => {
     const classes = $(element).attr('class');
     if (classes) {
-      classes.split(/\s+/).forEach(className => classNames.add(className));
+      classes.split(/\s+/).forEach((className: string) => classNames.add(className));
     }
   });
 
@@ -64,11 +63,9 @@ const inlineStyles = async (html: string) => {
   return juice(htmlWithStyles, {removeStyleTags: true});
 }
 
-const renderEmailFromTemplate: TRenderEmailFromTemplate = async (templatePath, data) => {
+export const makeStylesInline: TMakeStylesInline = async (templatePath, data) => {
   const templateSource = fs.readFileSync(templatePath, 'utf8');
   const template = Handlebars.compile(templateSource);
   const html = template(data);
   return await inlineStyles(html);
 }
-
-module.exports = renderEmailFromTemplate;
