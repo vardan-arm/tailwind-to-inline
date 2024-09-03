@@ -1,10 +1,9 @@
-import * as fs from 'fs';
-const juice = require('juice');
-const Handlebars = require('handlebars');
-const cheerio = require('cheerio');
-const postcss = require('postcss');
-const path = require('path');
-const tailwindcss = require('tailwindcss');
+import fs from 'fs';
+import juice from 'juice';
+import Handlebars from 'handlebars';
+import postcss from 'postcss';
+import path from 'path';
+import tailwindcss from 'tailwindcss';
 
 type TMakeStylesInline = (
   template: string,
@@ -12,37 +11,20 @@ type TMakeStylesInline = (
 ) => Promise<string>;
 
 const processTailwindCSS = async (html: string) => {
-  const $ = cheerio.load(html);
-  const classNames = new Set();
-
-  // Extract all class names from the HTML
-  $('*').each((_: any, element: HTMLElement) => {
-    const classes = $(element).attr('class');
-    if (classes) {
-      classes.split(/\s+/).forEach((className: string) => classNames.add(className));
-    }
-  });
-
-  // Create a dummy HTML file with all the used classes
-  const dummyHTML = `
-    <html>
-      <body>
-        ${Array.from(classNames).map(className => `<div class="${className}"></div>`).join('\n')}
-      </body>
-    </html>
-  `;
-
-  // Write the dummy HTML to a temporary file
+  // Write the HTML to a temporary file
   const tempFilePath = path.join(__dirname, 'temp.html');
-  fs.writeFileSync(tempFilePath, dummyHTML);
+  fs.writeFileSync(tempFilePath, html);
 
-  // Process the CSS with Tailwind
+  // Process the CSS with Tailwind and Autoprefixer
   const result = await postcss([
     tailwindcss({
       content: [tempFilePath],
-      // Add any custom Tailwind configuration here if needed
-    })
-  ]).process('@tailwind base; @tailwind components; @tailwind utilities;', {
+      // Disable Preflight (Tailwind's base styles)
+      corePlugins: {
+        preflight: false,
+      },
+    }),
+  ]).process('@tailwind components; @tailwind utilities;', {
     from: undefined
   });
 
@@ -56,11 +38,18 @@ const inlineStyles = async (html: string) => {
   // Process Tailwind CSS
   const tailwindCss = await processTailwindCSS(html);
 
-  // Add processed Tailwind CSS to the HTML
-  const htmlWithStyles = `<style>${tailwindCss}</style>${html}`;
-
   // Use juice to inline the styles
-  return juice(htmlWithStyles, {removeStyleTags: true});
+  const inlinedHtml = juice.inlineContent(html, tailwindCss, {
+    inlinePseudoElements: true,
+    preserveMediaQueries: true,
+    preserveFontFaces: true,
+    applyStyleTags: true,
+    removeStyleTags: true,
+    insertPreservedExtraCss: true,
+    extraCss: tailwindCss
+  });
+
+  return inlinedHtml;
 }
 
 export const makeStylesInline: TMakeStylesInline = async (templatePath, data) => {

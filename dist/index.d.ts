@@ -1,3 +1,3 @@
-import { renderEmailFromTemplate } from './src/utils/renderEmailFromTemplate';
-export { renderEmailFromTemplate };
+import { makeStylesInline } from './src/utils/makeStylesInline';
+export { makeStylesInline };
 //# sourceMappingURL=index.d.ts.map
