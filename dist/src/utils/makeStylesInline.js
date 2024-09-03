@@ -39,10 +39,18 @@ const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function*
     fs_1.default.unlinkSync(tempFilePath);
     return result.css;
 });
+const simplifyColors = (css) => {
+    // Convert rgb() / var(--tw-*) format to simple rgb()
+    css = css.replace(/rgb\(([^)]+)\) \/ var\(--tw-[^)]+\)/g, 'rgb($1)');
+    // Convert rgba() with var(--tw-*) to simple rgba()
+    css = css.replace(/rgba\(([^,]+), ([^,]+), ([^,]+), var\(--tw-[^)]+\)\)/g, 'rgba($1, $2, $3, 1)');
+    // Remove all --tw-* variable declarations
+    css = css.replace(/--tw-[^:]+:[^;]+;/g, '');
+    return css;
+};
 const inlineStyles = (html) => __awaiter(void 0, void 0, void 0, function* () {
-    // Process Tailwind CSS
-    const tailwindCss = yield processTailwindCSS(html);
-    // Use juice to inline the styles
+    let tailwindCss = yield processTailwindCSS(html);
+    tailwindCss = simplifyColors(tailwindCss);
     const inlinedHtml = juice_1.default.inlineContent(html, tailwindCss, {
         inlinePseudoElements: true,
         preserveMediaQueries: true,
@@ -52,7 +60,22 @@ const inlineStyles = (html) => __awaiter(void 0, void 0, void 0, function* () {
         insertPreservedExtraCss: true,
         extraCss: tailwindCss
     });
-    return inlinedHtml;
+    // Final pass to clean up any remaining complex color formats
+    return inlinedHtml.replace(/style="([^"]*)"/g, (match, styles) => {
+        const cleanedStyles = styles
+            .split(';')
+            .map((style) => {
+            const [property, value] = style.split(':').map(s => s.trim());
+            if (value && value.includes('var(--tw-')) {
+                // If the value contains a Tailwind CSS variable, simplify it
+                return `${property}: ${value.replace(/var\(--tw-[^)]+\)/, '1')}`;
+            }
+            return style;
+        })
+            .filter(Boolean)
+            .join(';');
+        return `style="${cleanedStyles}"`;
+    });
 });
 const makeStylesInline = (templatePath, data) => __awaiter(void 0, void 0, void 0, function* () {
     const templateSource = fs_1.default.readFileSync(templatePath, 'utf8');

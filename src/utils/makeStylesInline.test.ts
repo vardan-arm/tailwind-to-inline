@@ -22,11 +22,11 @@ describe('renderEmailFromTemplate', () => {
     <title>Test title</title>
   </head>
   <body>
-    <div class="pt-10 pl-4 max-w-[512px] relative z-20" style="position: relative; z-index: 20; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem;">
-      <span class="mr-5" style="margin-right: 1.25rem;">Welcome, John Doe</span>
+    <div class="pt-10 pl-4 max-w-[512px] relative z-20" style="position: relative; z-index: 20; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem">
+      <span class="mr-5" style="margin-right: 1.25rem">Welcome, John Doe</span>
     </div>
     <div>
-      <a href="https://example.com" class="bg-blue-500 text-white rounded hover:bg-blue-600" style="border-radius: 0.25rem; --tw-bg-opacity: 1; background-color: rgb(59 130 246 / var(--tw-bg-opacity)); --tw-text-opacity: 1; color: rgb(255 255 255 / var(--tw-text-opacity));">See all features</a>
+      <a href="https://example.com" class="bg-blue-500" style="background-color: rgb(59 130 246 / 1)">See all features</a>
     </div>
   </body>
 </html>
