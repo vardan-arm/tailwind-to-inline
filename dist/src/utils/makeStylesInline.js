@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,74 +36,56 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeStylesInline = void 0;
-const fs_1 = __importDefault(require("fs"));
+const fs = __importStar(require("fs"));
 const juice_1 = __importDefault(require("juice"));
 const handlebars_1 = __importDefault(require("handlebars"));
 const postcss_1 = __importDefault(require("postcss"));
-const path_1 = __importDefault(require("path"));
 const tailwindcss_1 = __importDefault(require("tailwindcss"));
+const autoprefixer_1 = __importDefault(require("autoprefixer"));
+const path_1 = __importDefault(require("path"));
 const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function* () {
-    // Write the HTML to a temporary file
     const tempFilePath = path_1.default.join(__dirname, 'temp.html');
-    fs_1.default.writeFileSync(tempFilePath, html);
-    // Process the CSS with Tailwind and Autoprefixer
+    fs.writeFileSync(tempFilePath, html);
+    const tailwindConfig = {
+        content: [tempFilePath],
+        corePlugins: {
+            preflight: false,
+        },
+    };
     const result = yield (0, postcss_1.default)([
-        (0, tailwindcss_1.default)({
-            content: [tempFilePath],
-            // Disable Preflight (Tailwind's base styles)
-            corePlugins: {
-                preflight: false,
-            },
-        }),
+        (0, tailwindcss_1.default)(tailwindConfig),
+        autoprefixer_1.default,
+        // ]).process('@tailwind base; @tailwind components; @tailwind utilities;', {
     ]).process('@tailwind components; @tailwind utilities;', {
-        from: undefined
+        from: undefined,
     });
-    // Remove the temporary file
-    fs_1.default.unlinkSync(tempFilePath);
+    fs.unlinkSync(tempFilePath);
     return result.css;
 });
 const simplifyColors = (css) => {
-    // Convert rgb() / var(--tw-*) format to simple rgb()
-    css = css.replace(/rgb\(([^)]+)\) \/ var\(--tw-[^)]+\)/g, 'rgb($1)');
-    // Convert rgba() with var(--tw-*) to simple rgba()
-    css = css.replace(/rgba\(([^,]+), ([^,]+), ([^,]+), var\(--tw-[^)]+\)\)/g, 'rgba($1, $2, $3, 1)');
-    // Remove all --tw-* variable declarations
-    css = css.replace(/--tw-[^:]+:[^;]+;/g, '');
-    return css;
+    return css
+        .replace(/rgb\(([^)]+)\) \/ var\(--tw-[^)]+\)/g, 'rgb($1)')
+        .replace(/rgba\(([^,]+),([^,]+),([^,]+),var\(--tw-[^)]+\)\)/g, 'rgba($1,$2,$3,1)')
+        .replace(/var\(--tw-[^)]+\)/g, '1')
+        .replace(/--tw-[^:]+:[^;]+;/g, '');
 };
 const inlineStyles = (html) => __awaiter(void 0, void 0, void 0, function* () {
-    let tailwindCss = yield processTailwindCSS(html);
-    tailwindCss = simplifyColors(tailwindCss);
-    const inlinedHtml = juice_1.default.inlineContent(html, tailwindCss, {
-        inlinePseudoElements: true,
-        preserveMediaQueries: true,
-        preserveFontFaces: true,
+    const tailwindCss = yield processTailwindCSS(html);
+    const simplifiedCss = simplifyColors(tailwindCss);
+    return (0, juice_1.default)(html, {
+        extraCss: simplifiedCss,
         applyStyleTags: true,
         removeStyleTags: true,
-        insertPreservedExtraCss: true,
-        extraCss: tailwindCss
-    });
-    // Final pass to clean up any remaining complex color formats
-    return inlinedHtml.replace(/style="([^"]*)"/g, (match, styles) => {
-        const cleanedStyles = styles
-            .split(';')
-            .map((style) => {
-            const [property, value] = style.split(':').map(s => s.trim());
-            if (value && value.includes('var(--tw-')) {
-                // If the value contains a Tailwind CSS variable, simplify it
-                return `${property}: ${value.replace(/var\(--tw-[^)]+\)/, '1')}`;
-            }
-            return style;
-        })
-            .filter(Boolean)
-            .join(';');
-        return `style="${cleanedStyles}"`;
+        preserveMediaQueries: true,
+        preserveFontFaces: true,
+        preserveImportant: true,
+        inlinePseudoElements: true,
     });
 });
 const makeStylesInline = (templatePath, data) => __awaiter(void 0, void 0, void 0, function* () {
-    const templateSource = fs_1.default.readFileSync(templatePath, 'utf8');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = handlebars_1.default.compile(templateSource);
     const html = template(data);
-    return yield inlineStyles(html);
+    return inlineStyles(html);
 });
 exports.makeStylesInline = makeStylesInline;
