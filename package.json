@@ -12,9 +12,6 @@
     "build": "rm -rf dist && tsc --outDir dist --declaration --declarationDir dist",
     "test": "jest"
   },
-  "jest": {
-    "preset": "ts-jest"
-  },
   "keywords": [
     "tailwind",
     "inline",
