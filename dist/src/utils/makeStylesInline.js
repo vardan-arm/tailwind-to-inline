@@ -43,6 +43,11 @@ const postcss_1 = __importDefault(require("postcss"));
 const tailwindcss_1 = __importDefault(require("tailwindcss"));
 const autoprefixer_1 = __importDefault(require("autoprefixer"));
 const path_1 = __importDefault(require("path"));
+// import rgbHex from 'rgb-hex';
+const rgb2hex_1 = __importDefault(require("rgb2hex"));
+// const rgbHex = require('rgb-hex');
+const rgbToHex_1 = require("./rgbToHex");
+console.log('rgb2hex is: ', rgb2hex_1.default);
 const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function* () {
     const tempFilePath = path_1.default.join(__dirname, 'temp.html');
     fs.writeFileSync(tempFilePath, html);
@@ -69,14 +74,35 @@ const simplifyColors = (css) => {
         .replace(/var\(--tw-[^)]+\)/g, '1')
         .replace(/--tw-[^:]+:[^;]+;/g, '');
     // The following is done in particular for Gmail, as it strips the inline styling when meets `rgba` colors
-    const moreSimplifications = generalSimplifications
-        // .replace(/\s\//, ',')
-        .replace(/(rgb[a]?)/, 'rgb')
-        // .replace(/[\d]+[\s]+[\d]+[\s]+[\d]+[\s]+(\/[\s]+\d)/, ''); // return the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
-        // .replace(/([\d]+[\s]+[\d]+[\s]+[\d]+[\s]+)(\/[\s]+\d)/, '$1'); // return the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
-        // .replace(/([\d]+[\s]+[\d]+[\s]+[\d]+[\s]+)(\/[\s]+\d)/, '$1'); // return the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
-        .replace(/rgba?\((\d+)\s+(\d+)\s+(\d+)\s*\/.*\)/, 'rgb($1 $2 $3)'); // return the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
-    return moreSimplifications;
+    /*const moreSimplifications = generalSimplifications
+      // .replace(/\s\//, ',')
+      // .replace(/(rgb[a]?)/, 'rgb')
+      // .replace(/[\d]+[\s]+[\d]+[\s]+[\d]+[\s]+(\/[\s]+\d)/, ''); // return the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
+      // .replace(/([\d]+[\s]+[\d]+[\s]+[\d]+[\s]+)(\/[\s]+\d)/, '$1'); // return the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
+      // .replace(/([\d]+[\s]+[\d]+[\s]+[\d]+[\s]+)(\/[\s]+\d)/, '$1'); // return the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
+
+      // strip the "opacity" part from `rgb(a)` so `rgba(59 130 246 /  1)` becomes `rgb(59 130 246)`
+      .replace(/rgba?\(\d+\s+\d+\s+\d+\s*\/.*\)/, 'rgb($1 $2 $3)');*/
+    /*const x1 = rgb2hex(' rgb(59, 130, 246)');
+    console.log('x1: ', x1);
+    const x2 = rgb2hex(' rgb(59 130 246 / 1)');
+    console.log('x2: ', x2);*/
+    // const x3 = rgbToHex(' rgb(59, 130, 246)');
+    const x3 = (0, rgbToHex_1.rgbToHex)(' rgb(37 99 235)');
+    console.log('x3: ', x3);
+    // const xx = moreSimplifications.replace('', rgbHex('$1'))
+    // const xx = moreSimplifications.replace(/rgba?\(\d+\s+\d+\s+\d+\s*\/.*\)/, rgb2hex('$1').hex)
+    console.log('generalSimplifications: ', generalSimplifications);
+    // TODO: make sure the regex changes it gloabbly
+    // const xx = generalSimplifications.replace(/rgba?\(\d+\s+\d+\s+\d+\s*\/.*\)/, match => {
+    const xx = generalSimplifications.replace(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/, match => {
+        console.log('match: ', match);
+        const result = (0, rgb2hex_1.default)(match);
+        return result.hex;
+    });
+    console.log('xx: ', xx);
+    // return moreSimplifications;
+    return xx;
 };
 const inlineStyles = (html) => __awaiter(void 0, void 0, void 0, function* () {
     const tailwindCss = yield processTailwindCSS(html);
