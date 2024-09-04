@@ -11,6 +11,7 @@ describe('renderEmailFromTemplate', () => {
       cta_text: 'See all features'
     };
     const inlinedHtml = await makeStylesInline(templatePath, placeholderValues);
+    console.log('inlinedHtml: ', inlinedHtml);
 
     expect(inlinedHtml).toEqual(`<html>
   <head>
