@@ -8,11 +8,8 @@
     "declarationDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "lib": [
-      "DOM",
-      "ES2021.String"
-    ]
+    "lib": ["DOM", "ES2021.String"]
   },
-  "include": ["index.ts","src/**/*"],
-  "exclude": ["src/**/*.test.*"]
+  "include": ["**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -1,6 +1,6 @@
 const jestConfig = {
-  "preset": "ts-jest",
-  testMatch: ["**/?(*.)+(spec|test).ts"],
-}
+  preset: 'ts-jest',
+  testMatch: ['**/?(*.)+(spec|test).ts'],
+};
 
 module.exports = jestConfig;
