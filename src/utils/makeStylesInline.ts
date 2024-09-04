@@ -1,60 +1,74 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import juice from 'juice';
 import Handlebars from 'handlebars';
 import postcss from 'postcss';
-import path from 'path';
 import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
+import path from 'path';
+
+import {rgbToHex} from './rgbToHex';
 
 type TMakeStylesInline = (
   template: string,
   placeholderValues?: { [key: string]: string }
 ) => Promise<string>;
 
-const processTailwindCSS = async (html: string) => {
-  // Write the HTML to a temporary file
+const processTailwindCSS = async (html: string): Promise<string> => {
   const tempFilePath = path.join(__dirname, 'temp.html');
   fs.writeFileSync(tempFilePath, html);
 
-  // Process the CSS with Tailwind and Autoprefixer
+  const tailwindConfig = {
+    content: [tempFilePath],
+    corePlugins: {
+      preflight: false,
+    },
+  };
+
   const result = await postcss([
-    tailwindcss({
-      content: [tempFilePath],
-      // Disable Preflight (Tailwind's base styles)
-      corePlugins: {
-        preflight: false,
-      },
-    }),
+    tailwindcss(tailwindConfig),
+    autoprefixer,
   ]).process('@tailwind components; @tailwind utilities;', {
-    from: undefined
+    from: undefined,
   });
 
-  // Remove the temporary file
   fs.unlinkSync(tempFilePath);
-
   return result.css;
-}
+};
 
-const inlineStyles = async (html: string) => {
-  // Process Tailwind CSS
+const simplifyColors = (css: string): string => {
+  // Remove CSS variables coming from Tailwind (starting with "--tw-...")
+  const generalSimplifications = css
+    .replace(/rgb\(([^)]+)\) \/ var\(--tw-[^)]+\)/g, 'rgb($1)')
+    .replace(/rgba\(([^,]+),([^,]+),([^,]+),var\(--tw-[^)]+\)\)/g, 'rgba($1,$2,$3,1)')
+    .replace(/var\(--tw-[^)]+\)/g, '1')
+    .replace(/--tw-[^:]+:[^;]+;/g, '')
+
+  // Since email agents like Gmail don't allow using `rgb()` colors, we replace them with their `hex` counterparts
+  const hexColorsInsteadOfRgb = generalSimplifications.replaceAll(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/g, match => {
+    return rgbToHex(match);
+  });
+
+  return hexColorsInsteadOfRgb;
+};
+
+const inlineStyles = async (html: string): Promise<string> => {
   const tailwindCss = await processTailwindCSS(html);
+  const simplifiedCss = simplifyColors(tailwindCss);
 
-  // Use juice to inline the styles
-  const inlinedHtml = juice.inlineContent(html, tailwindCss, {
-    inlinePseudoElements: true,
-    preserveMediaQueries: true,
-    preserveFontFaces: true,
+  return juice(html, {
+    extraCss: simplifiedCss,
     applyStyleTags: true,
     removeStyleTags: true,
-    insertPreservedExtraCss: true,
-    extraCss: tailwindCss
+    preserveMediaQueries: true,
+    preserveFontFaces: true,
+    preserveImportant: true,
+    inlinePseudoElements: true,
   });
-
-  return inlinedHtml;
-}
+};
 
 export const makeStylesInline: TMakeStylesInline = async (templatePath, data) => {
   const templateSource = fs.readFileSync(templatePath, 'utf8');
   const template = Handlebars.compile(templateSource);
   const html = template(data);
-  return await inlineStyles(html);
-}
+  return inlineStyles(html);
+};
