@@ -75,8 +75,11 @@ const simplifyColors = (css: string): string => {
   // const xx = generalSimplifications.replace(/rgba?\(\d+\s+\d+\s+\d+\s*\/.*\)/, match => {
   const xx = generalSimplifications.replace(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/, match => {
     console.log('match: ', match);
-    const result = rgb2hex(match);
-    return result.hex;
+    // const result = rgb2hex(match);
+    const result = rgbToHex(match);
+    console.log('result in matcher: ', result);
+    // return result.hex;
+    return result;
   });
 console.log('xx: ', xx);
   // return moreSimplifications;
