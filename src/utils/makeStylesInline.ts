@@ -71,9 +71,11 @@ const simplifyColors = (css: string): string => {
   // const xx = moreSimplifications.replace('', rgbHex('$1'))
   // const xx = moreSimplifications.replace(/rgba?\(\d+\s+\d+\s+\d+\s*\/.*\)/, rgb2hex('$1').hex)
   console.log('generalSimplifications: ', generalSimplifications);
-  // TODO: make sure the regex changes it gloabbly
+  // TODO: make sure the regex changes it globally (and make sure to cover with tests)
+  // TODO: fix bad variable naming
   // const xx = generalSimplifications.replace(/rgba?\(\d+\s+\d+\s+\d+\s*\/.*\)/, match => {
-  const xx = generalSimplifications.replace(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/, match => {
+  // const xx = generalSimplifications.replace(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/, match => {
+  const xx = generalSimplifications.replaceAll(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/g, match => {
     console.log('match: ', match);
     // const result = rgb2hex(match);
     const result = rgbToHex(match);
