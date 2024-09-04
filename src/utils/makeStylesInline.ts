@@ -6,6 +6,8 @@ import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 import path from 'path';
 
+import {rgbToHex} from './rgbToHex';
+
 type TMakeStylesInline = (
   template: string,
   placeholderValues?: { [key: string]: string }
@@ -25,7 +27,6 @@ const processTailwindCSS = async (html: string): Promise<string> => {
   const result = await postcss([
     tailwindcss(tailwindConfig),
     autoprefixer,
-  // ]).process('@tailwind base; @tailwind components; @tailwind utilities;', {
   ]).process('@tailwind components; @tailwind utilities;', {
     from: undefined,
   });
@@ -35,11 +36,19 @@ const processTailwindCSS = async (html: string): Promise<string> => {
 };
 
 const simplifyColors = (css: string): string => {
-  return css
+  // Remove CSS variables coming from Tailwind (starting with "--tw-...")
+  const generalSimplifications = css
     .replace(/rgb\(([^)]+)\) \/ var\(--tw-[^)]+\)/g, 'rgb($1)')
     .replace(/rgba\(([^,]+),([^,]+),([^,]+),var\(--tw-[^)]+\)\)/g, 'rgba($1,$2,$3,1)')
     .replace(/var\(--tw-[^)]+\)/g, '1')
-    .replace(/--tw-[^:]+:[^;]+;/g, '');
+    .replace(/--tw-[^:]+:[^;]+;/g, '')
+
+  // Since email agents like Gmail don't allow using `rgb()` colors, we replace them with their `hex` counterparts
+  const hexColorsInsteadOfRgb = generalSimplifications.replaceAll(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/g, match => {
+    return rgbToHex(match);
+  });
+
+  return hexColorsInsteadOfRgb;
 };
 
 const inlineStyles = async (html: string): Promise<string> => {

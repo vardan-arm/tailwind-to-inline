@@ -43,6 +43,7 @@ const postcss_1 = __importDefault(require("postcss"));
 const tailwindcss_1 = __importDefault(require("tailwindcss"));
 const autoprefixer_1 = __importDefault(require("autoprefixer"));
 const path_1 = __importDefault(require("path"));
+const rgbToHex_1 = require("./rgbToHex");
 const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function* () {
     const tempFilePath = path_1.default.join(__dirname, 'temp.html');
     fs.writeFileSync(tempFilePath, html);
@@ -55,7 +56,6 @@ const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function*
     const result = yield (0, postcss_1.default)([
         (0, tailwindcss_1.default)(tailwindConfig),
         autoprefixer_1.default,
-        // ]).process('@tailwind base; @tailwind components; @tailwind utilities;', {
     ]).process('@tailwind components; @tailwind utilities;', {
         from: undefined,
     });
@@ -63,11 +63,16 @@ const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function*
     return result.css;
 });
 const simplifyColors = (css) => {
-    return css
+    const generalSimplifications = css
         .replace(/rgb\(([^)]+)\) \/ var\(--tw-[^)]+\)/g, 'rgb($1)')
         .replace(/rgba\(([^,]+),([^,]+),([^,]+),var\(--tw-[^)]+\)\)/g, 'rgba($1,$2,$3,1)')
         .replace(/var\(--tw-[^)]+\)/g, '1')
         .replace(/--tw-[^:]+:[^;]+;/g, '');
+    // Since email agents like Gmail don't allow using `rgb()` colors, we replace them with their `hex` counterparts
+    const withRgbToHex = generalSimplifications.replaceAll(/(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/g, match => {
+        return (0, rgbToHex_1.rgbToHex)(match);
+    });
+    return withRgbToHex;
 };
 const inlineStyles = (html) => __awaiter(void 0, void 0, void 0, function* () {
     const tailwindCss = yield processTailwindCSS(html);
