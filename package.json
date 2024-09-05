@@ -2,6 +2,14 @@
   "name": "tailwind-to-inline",
   "version": "1.0.0",
   "description": "Convert HTML templates with Tailwind CSS classes to inline styles. Ideal for email templates, making Tailwind-styled emails compatible with major email clients.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vardan-arm/tailwind-to-inline"
+  },
+  "bugs": {
+    "url": "https://github.com/vardan-arm/tailwind-to-inline/issues"
+  },
+  "homepage": "https://github.com/vardan-arm/tailwind-to-inline#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
