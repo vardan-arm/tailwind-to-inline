@@ -24,7 +24,7 @@
     "tailwind-email",
     "utility-classes",
     "responsive-email",
-    "dynamic-template",
+    "dynamic-template"
   ],
   "author": "Vardan Hakobyan",
   "license": "ISC",
