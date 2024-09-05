@@ -1,9 +1,6 @@
-type TMakeStylesInline = (
-  template: string,
-  placeholderValues?: {
+type TMakeStylesInline = (templatePath: string, placeholderValues?: {
     [key: string]: string;
-  },
-) => Promise<string>;
+}) => Promise<string>;
 export declare const makeStylesInline: TMakeStylesInline;
 export {};
 //# sourceMappingURL=makeStylesInline.d.ts.map

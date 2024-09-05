@@ -9,7 +9,7 @@ import path from 'path';
 import { rgbToHex } from './rgbToHex';
 
 type TMakeStylesInline = (
-  template: string,
+  templatePath: string,
   placeholderValues?: { [key: string]: string },
 ) => Promise<string>;
 

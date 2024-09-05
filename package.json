@@ -12,13 +12,14 @@
     "build": "rm -rf dist && tsc --outDir dist --declaration --declarationDir dist",
     "test": "jest",
     "lint": "eslint . --fix --config eslint.config.mjs",
-    "format": "prettier --ignore-path .gitignore dist --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path .gitignore dist --write \"**/*.+(js|ts|json|html)\""
   },
   "keywords": [
     "tailwind",
     "inline",
     "style",
     "html",
+    "email",
     "template"
   ],
   "author": "Vardan Hakobyan",
