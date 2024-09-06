@@ -65,11 +65,11 @@ A key-value pair object to replace dynamic content in the template.
 ```
 <html>
   <body>
-    <div class="pt-10 pl-4 max-w-[512px] relative z-20" style="position: relative; z-index: 20; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem;">
-      <span class="mr-5 text-yellow-300" style="margin-right: 1.25rem; color: #fde047;">Welcome, John</span>
+    <div style="position: relative; z-index: 20; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem;">
+      <span style="margin-right: 1.25rem; color: #fde047;">Welcome, John</span>
     </div>
     <div>
-      <a href="https://example.com/complete-profile" class="bg-blue-500" style="background-color: #3b82f6;">
+      <a href="https://example.com/complete-profile" style="background-color: #3b82f6;">
         Complete Profile
       </a>
     </div>

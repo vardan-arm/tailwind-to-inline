@@ -57,6 +57,10 @@ const simplifyColors = (css: string): string => {
   return hexColorsInsteadOfRgb;
 };
 
+const removeCssClasses = (css: string) => {
+  return css.replaceAll(/\s*class=["'][^"']*["']/g, '');
+}
+
 const inlineStyles = async (html: string): Promise<string> => {
   const tailwindCss = await processTailwindCSS(html);
   const simplifiedCss = simplifyColors(tailwindCss);
@@ -79,5 +83,8 @@ export const makeStylesInline: TMakeStylesInline = async (
   const templateSource = fs.readFileSync(templatePath, 'utf8');
   const template = Handlebars.compile(templateSource);
   const html = template(data);
-  return inlineStyles(html);
+
+  const inlinedStyles = await inlineStyles(html);
+
+  return removeCssClasses(inlinedStyles);
 };
