@@ -42,13 +42,10 @@ const handlebars_1 = __importDefault(require("handlebars"));
 const postcss_1 = __importDefault(require("postcss"));
 const tailwindcss_1 = __importDefault(require("tailwindcss"));
 const autoprefixer_1 = __importDefault(require("autoprefixer"));
-const path_1 = __importDefault(require("path"));
 const rgbToHex_1 = require("./rgbToHex");
 const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function* () {
-    const tempFilePath = path_1.default.join(__dirname, 'temp.html');
-    fs.writeFileSync(tempFilePath, html);
     const tailwindConfig = {
-        content: [tempFilePath],
+        content: [{ raw: html, extension: 'html' }],
         corePlugins: {
             preflight: false,
         },
@@ -59,7 +56,6 @@ const processTailwindCSS = (html) => __awaiter(void 0, void 0, void 0, function*
     ]).process('@tailwind components; @tailwind utilities;', {
         from: undefined,
     });
-    fs.unlinkSync(tempFilePath);
     return result.css;
 });
 const simplifyColors = (css) => {
@@ -74,6 +70,9 @@ const simplifyColors = (css) => {
         return (0, rgbToHex_1.rgbToHex)(match);
     });
     return hexColorsInsteadOfRgb;
+};
+const removeCssClasses = (css) => {
+    return css.replaceAll(/\s*class=["'][^"']*["']/g, '');
 };
 const inlineStyles = (html) => __awaiter(void 0, void 0, void 0, function* () {
     const tailwindCss = yield processTailwindCSS(html);
@@ -92,6 +91,7 @@ const makeStylesInline = (templatePath, data) => __awaiter(void 0, void 0, void 
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = handlebars_1.default.compile(templateSource);
     const html = template(data);
-    return inlineStyles(html);
+    const inlinedStyles = yield inlineStyles(html);
+    return removeCssClasses(inlinedStyles);
 });
 exports.makeStylesInline = makeStylesInline;

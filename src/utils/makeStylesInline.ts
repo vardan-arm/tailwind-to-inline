@@ -4,7 +4,6 @@ import Handlebars from 'handlebars';
 import postcss from 'postcss';
 import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
-import path from 'path';
 
 import { rgbToHex } from './rgbToHex';
 
@@ -14,11 +13,8 @@ type TMakeStylesInline = (
 ) => Promise<string>;
 
 const processTailwindCSS = async (html: string): Promise<string> => {
-  const tempFilePath = path.join(__dirname, 'temp.html');
-  fs.writeFileSync(tempFilePath, html);
-
   const tailwindConfig = {
-    content: [tempFilePath],
+    content: [{ raw: html, extension: 'html' }],
     corePlugins: {
       preflight: false,
     },
@@ -31,7 +27,6 @@ const processTailwindCSS = async (html: string): Promise<string> => {
     from: undefined,
   });
 
-  fs.unlinkSync(tempFilePath);
   return result.css;
 };
 
@@ -59,7 +54,7 @@ const simplifyColors = (css: string): string => {
 
 const removeCssClasses = (css: string) => {
   return css.replaceAll(/\s*class=["'][^"']*["']/g, '');
-}
+};
 
 const inlineStyles = async (html: string): Promise<string> => {
   const tailwindCss = await processTailwindCSS(html);
