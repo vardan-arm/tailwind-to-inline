@@ -23,6 +23,7 @@ describe('renderEmailFromTemplate', () => {
     </div>
     <div>
       <a href="https://example.com" style="background-color: #3b82f6;">See all features</a>
+      <div style="background-image: url('https://example.com/custom-image.png'); background-repeat: no-repeat;"></div>
     </div>
   </body>
 </html>
