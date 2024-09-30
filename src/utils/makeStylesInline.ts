@@ -53,7 +53,10 @@ const simplifyColors = (css: string): string => {
 };
 
 const removeCssClasses = (css: string) => {
-  return css.replaceAll(/\s*class=["'][^"']*["']/g, '');
+  // https://claude.ai/chat/9475aaf1-207a-4921-8b7d-f7a2b14c265f
+  const regex = /\s*class=(['"])(?:(?!\1)[^\\]|\\.)*\1/g;
+
+  return css.replaceAll(regex, '');
 };
 
 const inlineStyles = async (html: string): Promise<string> => {
