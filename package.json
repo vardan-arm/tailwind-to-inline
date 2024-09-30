@@ -1,6 +1,6 @@
 {
   "name": "tailwind-to-inline",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Convert HTML templates with Tailwind CSS classes to inline styles. Ideal for email templates, making Tailwind-styled emails compatible with major email clients.",
   "repository": {
     "type": "git",
