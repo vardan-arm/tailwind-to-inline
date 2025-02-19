@@ -23,7 +23,7 @@ No more manual inline styling - save time and reduce errors in your email templa
 
 ### Usage
 
-```
+```js
 import { makeStylesInline } from 'tailwind-to-inline';
 ...
 const htmlTemplate = await makeStylesInline('templates/welcome-email.html', {
@@ -45,7 +45,7 @@ A key-value pair object to replace dynamic content in the template.
 ### Example
 #### Original template `welcome-email.html`:
 
-```
+```html
 <html>
   <body>
     <div class="pt-10 pl-4 max-w-[512px] relative z-20">
@@ -62,7 +62,7 @@ A key-value pair object to replace dynamic content in the template.
 
 #### Converted result:
 
-```
+```html
 <html>
   <body>
     <div style="position: relative; z-index: 20; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem;">
