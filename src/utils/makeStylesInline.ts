@@ -74,15 +74,26 @@ const inlineStyles = async (html: string): Promise<string> => {
   });
 };
 
-export const makeStylesInline: TMakeStylesInline = async (
-  templatePath,
-  data,
-) => {
-  const templateSource = fs.readFileSync(templatePath, 'utf8');
-  const template = Handlebars.compile(templateSource);
-  const html = template(data);
+const processTemplate = async (
+  templateSource: string,
+  data?: { [key: string]: string }
+): Promise<string> => {
+  const template = Handlebars.compile(templateSource)
+  const html = template(data)
 
-  const inlinedStyles = await inlineStyles(html);
+  const inlinedStyles = await inlineStyles(html)
 
-  return removeCssClasses(inlinedStyles);
-};
+  return removeCssClasses(inlinedStyles)
+}
+
+export const makeStylesInline: TMakeStylesInline = async (templatePath, data) => {
+  const templateSource = fs.readFileSync(templatePath, "utf8")
+  return processTemplate(templateSource, data)
+}
+
+export const makeStylesInlineFromString = async (
+  templateString: string,
+  data?: { [key: string]: string }
+): Promise<string> => {
+  return processTemplate(templateString, data)
+}
