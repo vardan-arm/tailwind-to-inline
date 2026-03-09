@@ -1,3 +1,6 @@
-import { makeStylesInline } from './src/utils/makeStylesInline';
+import {
+  makeStylesInline,
+  makeStylesInlineFromString,
+} from './src/utils/makeStylesInline';
 
-export { makeStylesInline };
+export { makeStylesInline, makeStylesInlineFromString };
