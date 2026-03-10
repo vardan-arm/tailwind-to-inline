@@ -6,11 +6,11 @@ import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 
 import { rgbToHex } from './rgbToHex';
-
-type TMakeStylesInline = (
-  templatePath: string,
-  placeholderValues?: { [key: string]: string },
-) => Promise<string>;
+import type {
+  PlaceholderValues,
+  TMakeStylesInline,
+  TMakeStylesInlineFromString,
+} from './types';
 
 const processTailwindCSS = async (html: string): Promise<string> => {
   const tailwindConfig = {
@@ -53,7 +53,6 @@ const simplifyColors = (css: string): string => {
 };
 
 const removeCssClasses = (css: string) => {
-  // https://claude.ai/chat/9475aaf1-207a-4921-8b7d-f7a2b14c265f
   const regex = /\s*class=(['"])(?:(?!\1)[^\\]|\\.)*\1/g;
 
   return css.replaceAll(regex, '');
@@ -76,7 +75,7 @@ const inlineStyles = async (html: string): Promise<string> => {
 
 const processTemplate = async (
   templateSource: string,
-  data?: { [key: string]: string },
+  data?: PlaceholderValues,
 ): Promise<string> => {
   const template = Handlebars.compile(templateSource);
   const html = template(data);
@@ -94,9 +93,9 @@ export const makeStylesInline: TMakeStylesInline = async (
   return processTemplate(templateSource, data);
 };
 
-export const makeStylesInlineFromString = async (
-  templateString: string,
-  data?: { [key: string]: string },
-): Promise<string> => {
+export const makeStylesInlineFromString: TMakeStylesInlineFromString = async (
+  templateString,
+  data,
+) => {
   return processTemplate(templateString, data);
 };
