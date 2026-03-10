@@ -1,19 +1,18 @@
-import { makeStylesInline } from './makeStylesInline';
+import {
+  makeStylesInline,
+  makeStylesInlineFromString,
+} from './makeStylesInline';
+import * as fs from 'fs';
 
 describe('renderEmailFromTemplate', () => {
   const templatePath = 'src/mocks/example-template.html';
-
-  test('should render email from template', async () => {
-    const placeholderValues = {
-      name: 'John Doe',
-      thank_you: 'Thank you for signing up!',
-      cta_link: 'https://example.com',
-      cta_text: 'See all features',
-    };
-
-    const inlinedHtml = await makeStylesInline(templatePath, placeholderValues);
-
-    expect(inlinedHtml).toEqual(`<html>
+  const placeholderValues = {
+    name: 'John Doe',
+    thank_you: 'Thank you for signing up!',
+    cta_link: 'https://example.com',
+    cta_text: 'See all features',
+  };
+  const expectedHtml = `<html>
   <head>
     <title>Test title</title>
   </head>
@@ -27,6 +26,19 @@ describe('renderEmailFromTemplate', () => {
     </div>
   </body>
 </html>
-`);
+`;
+
+  test('should render email from template', async () => {
+    const inlinedHtml = await makeStylesInline(templatePath, placeholderValues);
+    expect(inlinedHtml).toEqual(expectedHtml);
+  });
+
+  test('should render email from raw template string', async () => {
+    const rawString = fs.readFileSync(templatePath, 'utf8');
+    const inlinedHtml = await makeStylesInlineFromString(
+      rawString,
+      placeholderValues,
+    );
+    expect(inlinedHtml).toEqual(expectedHtml);
   });
 });
