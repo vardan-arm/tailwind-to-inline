@@ -35,6 +35,11 @@
     "dynamic-template"
   ],
   "author": "Vardan Hakobyan",
+  "contributors": [
+    "Vardan Hakobyan (https://github.com/vardan-arm)",
+    "Diogo Moretti (https://github.com/diogomoretti)",
+    "Mark (https://github.com/markosmk)"
+  ],
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.9.1",

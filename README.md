@@ -91,6 +91,12 @@ const htmlTemplate = await makeStylesInlineFromString(html, {
 </html>
 ```
 
+### Contributors
+
+<a href="https://github.com/vardan-arm"><img src="https://github.com/vardan-arm.png" width="50" height="50" alt="vardan-arm" /></a>
+<a href="https://github.com/diogomoretti"><img src="https://github.com/diogomoretti.png" width="50" height="50" alt="diogomoretti" /></a>
+<a href="https://github.com/markosmk"><img src="https://github.com/markosmk.png" width="50" height="50" alt="markosmk" /></a>
+
 ### 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!
