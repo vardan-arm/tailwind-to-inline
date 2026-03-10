@@ -23,23 +23,37 @@ No more manual inline styling - save time and reduce errors in your email templa
 
 ### Usage
 
+#### From a file path
+
 ```js
 import { makeStylesInline } from 'tailwind-to-inline';
-...
+
 const htmlTemplate = await makeStylesInline('templates/welcome-email.html', {
   name: 'John',
   cta_text: 'Complete Profile'
-}; 
+});
 ```
 
+**Parameters:**
 
-### Parameters
+- `templatePath` — Path to the template file.
+- `placeholderValues` *(optional)* — A key-value pair object to replace dynamic content in the template.
 
-`templatePath`
-Path to the template file.
+#### From a raw HTML string
 
-`placeholderValues` *(optional)*
-A key-value pair object to replace dynamic content in the template.
+```js
+import { makeStylesInlineFromString } from 'tailwind-to-inline';
+
+const html = `<div class="pt-10 text-yellow-300">Hello, {{name}}</div>`;
+const htmlTemplate = await makeStylesInlineFromString(html, {
+  name: 'John',
+});
+```
+
+**Parameters:**
+
+- `templateString` — A raw HTML string containing Tailwind CSS classes.
+- `data` *(optional)* — A key-value pair object to replace dynamic content in the template.
 
 
 ### Example
