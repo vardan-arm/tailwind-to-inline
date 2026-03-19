@@ -1,5 +1,8 @@
 # Tailwind to Inline styles converter
 
+<!-- TODO: uncomment once deployed to Vercel -->
+<!-- ### [Try it online](https://tailwind-to-inline-playground.vercel.app) -->
+
 ### 🚀 Problem Solved
 This package addresses a common challenge in email template creation: the need for inline styles. With tailwind-to-inline, you can:
 
@@ -91,15 +94,15 @@ const htmlTemplate = await makeStylesInlineFromString(html, {
 </html>
 ```
 
+### 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
 ### Contributors
 
 <a href="https://github.com/vardan-arm"><img src="https://github.com/vardan-arm.png" width="50" height="50" alt="vardan-arm" /></a>
 <a href="https://github.com/diogomoretti"><img src="https://github.com/diogomoretti.png" width="50" height="50" alt="diogomoretti" /></a>
 <a href="https://github.com/markosmk"><img src="https://github.com/markosmk.png" width="50" height="50" alt="markosmk" /></a>
-
-### 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
 
 ### 📄 License
 
