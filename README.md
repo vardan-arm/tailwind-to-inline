@@ -1,23 +1,8 @@
 # Tailwind to Inline styles converter
 
+Converts Tailwind CSS classes to inline styles for email-ready HTML templates.
+
 ### [Try it online](https://tailwind-to-inline.vercel.app)
-
-### 🚀 Problem Solved
-This package addresses a common challenge in email template creation: the need for inline styles. With tailwind-to-inline, you can:
-
-- Quickly craft your templates using Tailwind CSS
-- Automatically convert Tailwind classes to inline styles
-- Generate email-ready HTML templates effortlessly
-
-No more manual inline styling - save time and reduce errors in your email template workflow!
-
-
-### 🔥 Top Features
-
-- Effortless Conversion: Transform Tailwind classes to inline styles with a single function call
-- Dynamic Content Support: Easily replace placeholders in your templates
-- Time-Saving: Eliminate the need for manual inline styling in email templates
-
 
 ### Installation
 `npm install tailwind-to-inline`
@@ -93,7 +78,7 @@ const htmlTemplate = await makeStylesInlineFromString(html, {
 </html>
 ```
 
-### 🤝 Contributing
+### Contributing
 
 Contributions, issues, and feature requests are welcome!
 
@@ -103,6 +88,6 @@ Contributions, issues, and feature requests are welcome!
 <a href="https://github.com/diogomoretti"><img src="https://github.com/diogomoretti.png" width="50" height="50" alt="diogomoretti" /></a>
 <a href="https://github.com/markosmk"><img src="https://github.com/markosmk.png" width="50" height="50" alt="markosmk" /></a>
 
-### 📄 License
+### License
 
 This project is MIT licensed.
