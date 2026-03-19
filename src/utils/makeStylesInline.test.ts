@@ -16,8 +16,8 @@ describe('renderEmailFromTemplate', () => {
   <head>
     <title>Test title</title>
   </head>
-  <body>
-    <div style="position: relative; z-index: 20; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem;">
+  <body style="background-color: #1f2937;">
+    <div style="position: relative; z-index: 20; margin-bottom: 1rem; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem;">
       <span style="margin-right: 1.25rem; color: #fde047;">Welcome, John Doe</span>
     </div>
     <div>

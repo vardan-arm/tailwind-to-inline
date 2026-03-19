@@ -1,7 +1,6 @@
 # Tailwind to Inline styles converter
 
-<!-- TODO: uncomment once deployed to Vercel -->
-<!-- ### [Try it online](https://tailwind-to-inline-playground.vercel.app) -->
+### [Try it online](https://tailwind-to-inline.vercel.app)
 
 ### 🚀 Problem Solved
 This package addresses a common challenge in email template creation: the need for inline styles. With tailwind-to-inline, you can:
@@ -64,8 +63,8 @@ const htmlTemplate = await makeStylesInlineFromString(html, {
 
 ```html
 <html>
-  <body>
-    <div class="pt-10 pl-4 max-w-[512px] relative z-20">
+  <body class="bg-gray-800">
+    <div class="pt-10 mb-4 pl-4 max-w-[512px] relative z-20">
       <span class="mr-5 text-yellow-300">Welcome, {{name}}</span>
     </div>
     <div>
@@ -81,8 +80,8 @@ const htmlTemplate = await makeStylesInlineFromString(html, {
 
 ```html
 <html>
-  <body>
-    <div style="position: relative; z-index: 20; max-width: 512px; padding-left: 1rem; padding-top: 2.5rem;">
+  <body style="background-color: #1f2937;">
+    <div style="position: relative; z-index: 20; max-width: 512px; margin-bottom: 1rem; padding-left: 1rem; padding-top: 2.5rem;">
       <span style="margin-right: 1.25rem; color: #fde047;">Welcome, John</span>
     </div>
     <div>
