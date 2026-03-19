@@ -6,8 +6,8 @@ const DEFAULT_HTML = `<html>
   <head>
     <title>Email Template</title>
   </head>
-  <body>
-    <div class="pt-10 pl-4 max-w-[512px]">
+  <body class="bg-gray-800">
+    <div class="pt-10 mb-4 pl-4 max-w-[512px]">
       <span class="mr-5 text-yellow-300">Welcome, {{name}}</span>
     </div>
     <div>
