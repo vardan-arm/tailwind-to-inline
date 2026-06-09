@@ -1,3 +1,35 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=id">Bahasa Indonesia</a>
+        | <a href="https://openaitx.github.io/view.html?user=vardan-arm&project=tailwind-to-inline&lang=as">অসমীয়া</
+      </div>
+    </div>
+  </details>
+</div>
+
 # Tailwind to Inline styles converter
 
 Converts Tailwind CSS classes to inline styles for email-ready HTML templates.
