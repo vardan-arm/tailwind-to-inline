@@ -88,6 +88,10 @@ Contributions, issues, and feature requests are welcome!
 <a href="https://github.com/diogomoretti"><img src="https://github.com/diogomoretti.png" width="50" height="50" alt="diogomoretti" /></a>
 <a href="https://github.com/markosmk"><img src="https://github.com/markosmk.png" width="50" height="50" alt="markosmk" /></a>
 
+### Support
+
+If you find this package useful, you can support it on [Patreon](https://www.patreon.com/vardan_live). Thanks ❤️
+
 ### License
 
 This project is MIT licensed.
