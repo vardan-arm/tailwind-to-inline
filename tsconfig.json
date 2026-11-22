@@ -8,6 +8,9 @@
     "declarationDir": "dist",
     "strict": true,
     "esModuleInterop": true,
+    "paths": {
+      "tailwindcss": ["./node_modules/tailwindcss/dist/lib.d.mts"]
+    },
     "lib": ["DOM", "ES2021.String"]
   },
   "include": ["**/*.ts"],

@@ -1,55 +1,40 @@
 import * as fs from 'fs';
 import juice from 'juice';
 import Handlebars from 'handlebars';
-import postcss from 'postcss';
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
+import { compile } from 'tailwindcss';
 
-import { rgbToHex } from './rgbToHex';
+import { TAILWIND_THEME_CSS } from '../generated/tailwindTheme';
+import { flattenTailwindCss, resolveTailwindVariables } from './tailwindCss';
 import type {
   PlaceholderValues,
   TMakeStylesInline,
   TMakeStylesInlineFromString,
 } from './types';
 
-const processTailwindCSS = async (html: string): Promise<string> => {
-  const tailwindConfig = {
-    content: [{ raw: html, extension: 'html' }],
-    corePlugins: {
-      preflight: false,
-    },
-  };
+// Theme variables and utilities only: Tailwind's base styles (preflight) are not needed for emails
+const TAILWIND_ENTRY = `
+  @layer theme, utilities;
+  @layer theme { ${TAILWIND_THEME_CSS} }
+  @layer utilities { @tailwind utilities; }
+`;
 
-  const result = await postcss([
-    tailwindcss(tailwindConfig),
-    autoprefixer,
-  ]).process('@tailwind components; @tailwind utilities;', {
-    from: undefined,
-  });
+const extractClassNames = (html: string): string[] => {
+  const classNames = new Set<string>();
+  const regex = /\sclass=(['"])([\s\S]*?)\1/g;
 
-  return result.css;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(html))) {
+    match[2].split(/\s+/).forEach((className) => classNames.add(className));
+  }
+  classNames.delete('');
+
+  return Array.from(classNames);
 };
 
-const simplifyColors = (css: string): string => {
-  // Remove CSS variables coming from Tailwind (starting with "--tw-...")
-  const generalSimplifications = css
-    .replace(/rgb\(([^)]+)\) \/ var\(--tw-[^)]+\)/g, 'rgb($1)')
-    .replace(
-      /rgba\(([^,]+),([^,]+),([^,]+),var\(--tw-[^)]+\)\)/g,
-      'rgba($1,$2,$3,1)',
-    )
-    .replace(/var\(--tw-[^)]+\)/g, '1')
-    .replace(/--tw-[^:]+:[^;]+;/g, '');
+const processTailwindCSS = async (html: string): Promise<string> => {
+  const compiler = await compile(TAILWIND_ENTRY);
 
-  // Since email agents like Gmail don't allow using `rgb()` colors, we replace them with their `hex` counterparts
-  const hexColorsInsteadOfRgb = generalSimplifications.replaceAll(
-    /(rgba?\(\d+\s+\d+\s+\d+\s*\/.*\))/g,
-    (match) => {
-      return rgbToHex(match);
-    },
-  );
-
-  return hexColorsInsteadOfRgb;
+  return compiler.build(extractClassNames(html));
 };
 
 const removeCssClasses = (css: string) => {
@@ -60,10 +45,10 @@ const removeCssClasses = (css: string) => {
 
 const inlineStyles = async (html: string): Promise<string> => {
   const tailwindCss = await processTailwindCSS(html);
-  const simplifiedCss = simplifyColors(tailwindCss);
+  const { css, initialValues } = flattenTailwindCss(tailwindCss);
 
-  return juice(html, {
-    extraCss: simplifiedCss,
+  const inlinedHtml = juice(html, {
+    extraCss: css,
     applyStyleTags: true,
     removeStyleTags: true,
     preserveMediaQueries: true,
@@ -71,6 +56,8 @@ const inlineStyles = async (html: string): Promise<string> => {
     preserveImportant: true,
     inlinePseudoElements: true,
   });
+
+  return resolveTailwindVariables(inlinedHtml, initialValues);
 };
 
 const processTemplate = async (

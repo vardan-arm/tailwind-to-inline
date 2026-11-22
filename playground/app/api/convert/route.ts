@@ -1,4 +1,4 @@
-import { makeStylesInlineFromString } from 'tailwind-to-inline';
+import { makeStylesInlineFromString } from '../../../../index';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {

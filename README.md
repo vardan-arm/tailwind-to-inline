@@ -5,8 +5,14 @@ Converts Tailwind CSS classes to inline styles for email-ready HTML templates.
 ### [Try it online](https://tailwind-to-inline.vercel.app)
 
 ### Installation
-`npm install tailwind-to-inline`
 
+| `tailwind-to-inline` | Tailwind CSS it uses | Install |
+|----------------------|----------------------|---------|
+| `2.x`                | v4                   | `npm install tailwind-to-inline` |
+| `1.x`                | v3                   | `npm install tailwind-to-inline@1` |
+
+Upgrading from `1.x`? The API is the same, but Tailwind v4 changed its color palette and renamed some
+utilities, so your emails may look different. See [Tailwind's upgrade guide](https://tailwindcss.com/docs/upgrade-guide).
 
 ### Usage
 
@@ -65,18 +71,28 @@ const htmlTemplate = await makeStylesInlineFromString(html, {
 
 ```html
 <html>
-  <body style="background-color: #1f2937;">
-    <div style="position: relative; z-index: 20; max-width: 512px; margin-bottom: 1rem; padding-left: 1rem; padding-top: 2.5rem;">
-      <span style="margin-right: 1.25rem; color: #fde047;">Welcome, John</span>
+  <body style="background-color: #1e2939;">
+    <div style="position: relative; z-index: 20; margin-bottom: 1rem; max-width: 512px; padding-top: 2.5rem; padding-left: 1rem;">
+      <span style="margin-right: 1.25rem; color: #ffdf20;">Welcome, John</span>
     </div>
     <div>
-      <a href="https://example.com/complete-profile" style="background-color: #3b82f6;">
+      <a href="https://example.com/complete-profile" style="background-color: #2b7fff;">
         Complete Profile
       </a>
     </div>
   </body>
 </html>
 ```
+
+### Email-friendly output
+
+Tailwind v4 generates modern CSS that most email clients don't support, so the styles are simplified while inlining:
+
+- Colors become hex, or `rgba()` when they have opacity (`bg-black/50` → `rgba(0, 0, 0, 0.5)`).
+- CSS variables and `calc()` are replaced with final values (`pt-10` → `padding-top: 2.5rem`).
+- Logical properties become physical ones (`px-4` → `padding-left` and `padding-right`).
+
+Tailwind's base styles (preflight) are not included.
 
 ### Contributing
 
