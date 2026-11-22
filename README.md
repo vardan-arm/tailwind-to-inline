@@ -6,14 +6,10 @@ Converts Tailwind CSS classes to inline styles for email-ready HTML templates.
 
 ### Installation
 
-```
-npm install tailwind-to-inline
-```
-
-| Package version | Tailwind CSS |
-|-----------------|--------------|
-| `2.x`           | v4           |
-| `1.x`           | v3 — `npm install tailwind-to-inline@1` |
+| `tailwind-to-inline` | Tailwind CSS it uses | Install |
+|----------------------|----------------------|---------|
+| `2.x`                | v4                   | `npm install tailwind-to-inline` |
+| `1.x`                | v3                   | `npm install tailwind-to-inline@1` |
 
 Upgrading from `1.x`? The API is the same, but Tailwind v4 changed its color palette and renamed some
 utilities, so your emails may look different. See [Tailwind's upgrade guide](https://tailwindcss.com/docs/upgrade-guide).
