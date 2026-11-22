@@ -97,6 +97,8 @@ Tailwind v4 generates modern CSS that most email clients don't support, so the s
 Keep a `<head>` in your template: that's where the `<style>` tag goes. Without it, the tag is added at the end
 of the `<body>` (or of the HTML), where many email clients ignore it.
 
+What these classes do still depends on the email client: Outlook, for example, ignores `hover:` classes.
+
 Tailwind's base styles (preflight) are not included.
 
 ### Contributing

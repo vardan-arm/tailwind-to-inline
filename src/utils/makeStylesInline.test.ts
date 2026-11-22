@@ -176,6 +176,20 @@ describe('classes kept for <style> rules', () => {
     expect(html).not.toContain('\\');
   });
 
+  test('should not wrap hover rules in a hover media query', async () => {
+    const html = await convert(
+      page('<a class="hover:underline md:hover:text-red-500">a</a>'),
+    );
+
+    expect(html).not.toContain('hover: hover');
+    expect(html).toContain(
+      '<style>\n.hover-underline:hover {\n  text-decoration-line: underline !important;\n}',
+    );
+    expect(html).toContain(
+      '@media (min-width: 48rem) {\n  .md-hover-text-red-500:hover {\n    color: #fb2c36 !important;',
+    );
+  });
+
   test('should give distinct names to classes that would get the same name', async () => {
     const html = await convert(
       page(

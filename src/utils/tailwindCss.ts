@@ -78,6 +78,11 @@ const toLegacyMediaQuery = (params: string): string =>
     },
   );
 
+const HOVER_MEDIA_FEATURE = /^\(\s*hover\s*:\s*hover\s*\)$/;
+
+const splitMediaConditions = (params: string): string[] =>
+  params.split(/\s+and\s+/).map((condition) => condition.trim());
+
 // Turns nested `@media` rules into a flat list with combined conditions
 const flattenMedia = (media: AtRule): AtRule[] => {
   const flattened: AtRule[] = [];
@@ -161,7 +166,16 @@ const flattenStructure = (root: postcss.Root) => {
   });
 
   root.walkAtRules('media', (media) => {
-    media.params = toLegacyMediaQuery(media.params);
+    // Tailwind wraps `hover:` rules in `@media (hover: hover)`, which Gmail drops together with the rules in it
+    const params = splitMediaConditions(media.params).filter(
+      (condition) => !HOVER_MEDIA_FEATURE.test(condition),
+    );
+
+    if (params.length === 0) {
+      media.replaceWith(media.nodes ?? []);
+    } else {
+      media.params = toLegacyMediaQuery(params.join(' and '));
+    }
   });
 
   return { theme, initialValues };
