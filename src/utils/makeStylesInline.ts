@@ -4,6 +4,7 @@ import Handlebars from 'handlebars';
 import { compile } from 'tailwindcss';
 
 import { TAILWIND_THEME_CSS } from '../generated/tailwindTheme';
+import { applySafeClasses } from './safeClasses';
 import { flattenTailwindCss, resolveTailwindVariables } from './tailwindCss';
 import type {
   PlaceholderValues,
@@ -37,12 +38,6 @@ const processTailwindCSS = async (html: string): Promise<string> => {
   return compiler.build(extractClassNames(html));
 };
 
-const removeCssClasses = (css: string) => {
-  const regex = /\s*class=(['"])(?:(?!\1)[^\\]|\\.)*\1/g;
-
-  return css.replaceAll(regex, '');
-};
-
 const inlineStyles = async (html: string): Promise<string> => {
   const tailwindCss = await processTailwindCSS(html);
   const { css, initialValues } = flattenTailwindCss(tailwindCss);
@@ -55,6 +50,8 @@ const inlineStyles = async (html: string): Promise<string> => {
     preserveFontFaces: true,
     preserveImportant: true,
     inlinePseudoElements: true,
+    // juice keeps `:hover`/`:focus` rules from `<style>` tags, but drops them from `extraCss`
+    preservedSelectors: juice.ignoredPseudos.map((pseudo) => `:${pseudo}`),
   });
 
   return resolveTailwindVariables(inlinedHtml, initialValues);
@@ -69,7 +66,7 @@ const processTemplate = async (
 
   const inlinedStyles = await inlineStyles(html);
 
-  return removeCssClasses(inlinedStyles);
+  return applySafeClasses(inlinedStyles);
 };
 
 export const makeStylesInline: TMakeStylesInline = async (

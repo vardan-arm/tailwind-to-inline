@@ -100,7 +100,9 @@ describe('Tailwind v4 output', () => {
     expect(html).toContain(
       '@media (min-width: 48rem) and (max-width: 63.99rem) {',
     );
-    expect(html).toContain('padding: 1rem;');
+    expect(html).toContain('.md-max-lg-p-4 {\n    padding: 1rem !important;');
+    expect(html).toContain('.max-md-hidden {\n    display: none !important;');
+    expect(html).toContain('<p class="md-max-lg-p-4 max-md-hidden">a</p>');
     expect(html).not.toContain('var(');
   });
 
@@ -110,6 +112,143 @@ describe('Tailwind v4 output', () => {
         '<style>:root { --brand: #123456; } .title { color: var(--brand); }</style><p class="title mt-2">a</p>',
       ),
     ).toEqual('<p style="color: #123456; margin-top: 0.5rem;">a</p>');
+  });
+});
+
+describe('classes kept for <style> rules', () => {
+  const convert = (html: string) => makeStylesInlineFromString(html);
+  const page = (body: string, head = '') =>
+    `<html><head>${head}</head><body>${body}</body></html>`;
+
+  test('should keep a responsive class with an email-safe name and !important', async () => {
+    expect(await convert(page('<p class="p-2 md:p-4">a</p>'))).toEqual(
+      page(
+        '<p class="md-p-4" style="padding: 0.5rem;">a</p>',
+        '<style>\n@media (min-width: 48rem) {\n  .md-p-4 {\n    padding: 1rem !important;\n  }\n}\n</style>',
+      ),
+    );
+  });
+
+  test('should keep only the classes used by <style> rules', async () => {
+    const html = await convert(
+      page(
+        '<p class="p-2 md:p-4 text-red-500">a</p><p class=\'text-red-500  font-bold\'>b</p>',
+      ),
+    );
+
+    expect(html).toContain(
+      '<p class="md-p-4" style="padding: 0.5rem; color: #fb2c36;">a</p>',
+    );
+    expect(html).toContain(
+      '<p style="font-weight: 700; color: #fb2c36;">b</p>',
+    );
+  });
+
+  test('should keep dark mode classes', async () => {
+    expect(await convert(page('<p class="dark:bg-black">a</p>'))).toEqual(
+      page(
+        '<p class="dark-bg-black">a</p>',
+        '<style>\n@media (prefers-color-scheme: dark) {\n  .dark-bg-black {\n    background-color: #000 !important;\n  }\n}\n</style>',
+      ),
+    );
+  });
+
+  test('should rename classes with special characters in all places', async () => {
+    const html = await convert(
+      page(
+        '<p class="w-full md:w-1/2">a</p><div class="md:max-w-[512px] md:text-[rgb(1,2,3)] 2xl:p-4"></div><p class="md:w-1/2">b</p>',
+      ),
+    );
+
+    expect(html).toContain('.md-w-1-2 {\n    width: 50% !important;');
+    expect(html).toContain(
+      '.md-max-w-512px {\n    max-width: 512px !important;',
+    );
+    expect(html).toContain(
+      '.md-text-rgb1_2_3 {\n    color: #010203 !important;',
+    );
+    expect(html).toContain('._2xl-p-4 {\n    padding: 1rem !important;');
+    expect(html).toContain('<p class="md-w-1-2" style="width: 100%;">a</p>');
+    expect(html).toContain(
+      '<div class="md-max-w-512px md-text-rgb1_2_3 _2xl-p-4"></div>',
+    );
+    expect(html).toContain('<p class="md-w-1-2">b</p>');
+    expect(html).not.toContain('\\');
+  });
+
+  test('should not wrap hover rules in a hover media query', async () => {
+    const html = await convert(
+      page('<a class="hover:underline md:hover:text-red-500">a</a>'),
+    );
+
+    expect(html).not.toContain('hover: hover');
+    expect(html).toContain(
+      '<style>\n.hover-underline:hover {\n  text-decoration-line: underline !important;\n}',
+    );
+    expect(html).toContain(
+      '@media (min-width: 48rem) {\n  .md-hover-text-red-500:hover {\n    color: #fb2c36 !important;',
+    );
+  });
+
+  test('should give distinct names to classes that would get the same name', async () => {
+    const html = await convert(
+      page(
+        '<p class="md:p-4 md-p-4">a</p>',
+        '<style>@media (max-width: 600px) { .md-p-4 { color: red; } }</style>',
+      ),
+    );
+
+    expect(html).toContain('.md-p-4 {\n    color: red;');
+    expect(html).toContain('.md-p-4-2 {\n    padding: 1rem !important;');
+    expect(html).toContain('<p class="md-p-4-2 md-p-4">a</p>');
+  });
+
+  test('should keep classes of user-defined rules without adding !important', async () => {
+    const html = await convert(
+      page(
+        '<a class="btn stack x:y text-red-500">a</a>',
+        '<style>@media (max-width: 600px) { .stack { display: block; } .x\\:y { color: blue; } } .btn:hover { color: red; }</style>',
+      ),
+    );
+
+    expect(html).toContain('.stack {\n    display: block;\n  }');
+    expect(html).toContain('.x-y {\n    color: blue;\n  }');
+    expect(html).toContain('.btn:hover {\n  color: red;\n}');
+    expect(html).toContain(
+      '<a class="btn stack x-y" style="color: #fb2c36;">a</a>',
+    );
+    expect(html).not.toContain('!important');
+  });
+
+  test('should keep Tailwind :focus rules', async () => {
+    expect(
+      await convert(page('<input class="border focus:border-red-500">')),
+    ).toEqual(
+      page(
+        '<input class="focus-border-red-500" style="border-style: solid; border-width: 1px;">',
+        '<style>\n.focus-border-red-500:focus {\n  border-color: #fb2c36 !important;\n}\n</style>',
+      ),
+    );
+  });
+
+  test('should not leave Tailwind internals or empty style tags', async () => {
+    const html = await convert(
+      page('<p class="md:shadow-red-500">a</p><p class="md:shadow-lg">b</p>'),
+    );
+
+    expect(html).not.toMatch(/-tw-|@supports|\\/);
+    expect(html).toContain('<p>a</p><p class="md-shadow-lg">b</p>');
+    expect(await convert(page('<p class="md:shadow-red-500">a</p>'))).toEqual(
+      page('<p>a</p>'),
+    );
+  });
+  test('should drop @supports fallbacks nested in media queries', async () => {
+    expect(await convert(page('<p class="md:bg-red-500/50">a</p>'))).toEqual(
+      page(
+        '<p class="md-bg-red-500-50">a</p>',
+        '<style>\n@media (min-width: 48rem) {\n  .md-bg-red-500-50 {\n    background-color: rgba(251, 44, 54, 0.5) !important;\n  }\n}\n</style>',
+      ),
+    );
   });
 });
 
