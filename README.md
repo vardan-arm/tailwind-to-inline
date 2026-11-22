@@ -91,6 +91,11 @@ Tailwind v4 generates modern CSS that most email clients don't support, so the s
 - Colors become hex, or `rgba()` when they have opacity (`bg-black/50` → `rgba(0, 0, 0, 0.5)`).
 - CSS variables and `calc()` are replaced with final values (`pt-10` → `padding-top: 2.5rem`).
 - Logical properties become physical ones (`px-4` → `padding-left` and `padding-right`).
+- Responsive, dark mode, `hover:` and `focus:` classes can't be inlined, so they stay in a `<style>` tag with
+  `!important` and email-safe class names (`md:p-4` → `.md-p-4`); other classes are removed.
+
+Keep a `<head>` in your template: that's where the `<style>` tag goes. Without it, the tag is added at the end
+of the `<body>` (or of the HTML), where many email clients ignore it.
 
 Tailwind's base styles (preflight) are not included.
 

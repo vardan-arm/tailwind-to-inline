@@ -1,4 +1,10 @@
-import postcss, { AtRule, ChildNode, Container, Declaration } from 'postcss';
+import postcss, {
+  AtRule,
+  ChildNode,
+  Container,
+  Declaration,
+  Rule,
+} from 'postcss';
 
 import {
   replaceFunctions,
@@ -6,6 +12,7 @@ import {
   simplifyValue,
   splitTopLevel,
   TW_PROP_PREFIX,
+  TW_RULE_MARKER,
   TW_VAR_FUNCTION,
 } from './cssValues';
 
@@ -96,6 +103,10 @@ const flattenMedia = (media: AtRule): AtRule[] => {
   return flattened;
 };
 
+const isKeyframe = (rule: Rule) =>
+  rule.parent?.type === 'atrule' &&
+  /keyframes$/i.test((rule.parent as AtRule).name);
+
 const collectDeclarations = (container: Container): Variables => {
   const variables: Variables = new Map();
   container.walkDecls((declaration) => {
@@ -134,10 +145,13 @@ const flattenStructure = (root: postcss.Root) => {
     }
   });
 
-  // Progressive enhancements nested in a rule (e.g. `@supports (color: color-mix(...))`):
-  // the rule itself already has the widely supported version
+  // Progressive enhancements nested in a rule or a media query (e.g. `@supports (color: color-mix(...))`):
+  // the rule itself, or the one before it in the media query, already has the widely supported version.
+  // juice can't parse `@supports` nested in `@media` either, and breaks the whole `<style>` tag.
   root.walkAtRules((atRule) => {
-    if (atRule.parent?.type === 'rule') atRule.remove();
+    const isNestedSupports =
+      atRule.name === 'supports' && atRule.parent?.type === 'atrule';
+    if (atRule.parent?.type === 'rule' || isNestedSupports) atRule.remove();
   });
 
   root.each((node) => {
@@ -215,6 +229,10 @@ export const flattenTailwindCss = (css: string) => {
     );
   });
 
+  root.walkRules((rule) => {
+    if (!isKeyframe(rule)) rule.append({ prop: TW_RULE_MARKER, value: '1' });
+  });
+
   return { css: root.toString(), initialValues };
 };
 
@@ -248,6 +266,24 @@ const resolveDeclarations = (
   }
 };
 
+// Inline styles win over `<style>` rules, so the Tailwind rules left there (media queries, `:focus`, etc.)
+// need `!important`. Gmail only accepts it in lowercase, and Outlook needs the space before it.
+const markImportant = (rule: Rule) => {
+  rule.walkDecls((declaration) => {
+    declaration.important = true;
+    declaration.raws.important = ' !important';
+  });
+};
+
+// Rules that only set `--tw-*` variables end up empty, and so may the at-rules containing them
+const removeEmptyBlocks = (container: Container) => {
+  container.each((node) => {
+    if (node.type !== 'rule' && node.type !== 'atrule') return;
+    if (node.nodes) removeEmptyBlocks(node);
+    if (node.nodes?.length === 0) node.remove();
+  });
+};
+
 /**
  * Resolves the `--tw-*` variable markers in the inlined HTML: for each element (and each rule left in `<style>` tags)
  * the values come from the element's own declarations, falling back to the variable's initial value.
@@ -271,13 +307,17 @@ export const resolveTailwindVariables = (
       /(<style[^>]*>)([\s\S]*?)(<\/style>)/gi,
       (_match, open, css, close) => {
         const resolved = process(css, (root) => {
-          root.walkRules((rule) => resolveDeclarations(rule, initialValues));
           root.walkRules((rule) => {
-            if (rule.nodes.length === 0) rule.remove();
+            const isTailwindRule = rule.some(
+              (node) => node.type === 'decl' && node.prop === TW_RULE_MARKER,
+            );
+            resolveDeclarations(rule, initialValues);
+            if (isTailwindRule) markImportant(rule);
           });
+          removeEmptyBlocks(root);
           return root.toString();
         });
-        return open + resolved + close;
+        return resolved.trim() ? open + resolved + close : '';
       },
     )
     .replace(/(\sstyle=")([^"]*)(")/g, (_match, open, css, close) => {

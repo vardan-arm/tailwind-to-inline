@@ -5,6 +5,9 @@ import { formatColor, parseColor } from './colors';
 export const TW_PROP_PREFIX = '-tw-';
 export const TW_VAR_FUNCTION = '-tw-var';
 
+// Added to every Tailwind rule, so the ones left in `<style>` tags can be told apart from the user's own rules
+export const TW_RULE_MARKER = `${TW_PROP_PREFIX}rule`;
+
 type FunctionReplacer = (name: string, args: string) => string | undefined;
 
 const findClosingParen = (value: string, openIndex: number): number => {
