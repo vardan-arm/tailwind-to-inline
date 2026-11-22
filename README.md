@@ -110,4 +110,4 @@ If you find this package useful, you can support it on [Patreon](https://www.pat
 
 ### License
 
-This project is MIT licensed.
+[MIT](LICENSE)
