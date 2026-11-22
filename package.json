@@ -21,10 +21,11 @@
   ],
   "scripts": {
     "start": "ts-node index.ts",
-    "build": "rm -rf dist && tsc --outDir dist --declaration --declarationDir dist",
+    "build": "npm run generate:theme && rm -rf dist && tsc --outDir dist --declaration --declarationDir dist",
     "test": "jest",
     "lint": "eslint . --fix --config eslint.config.mjs",
-    "format": "prettier --ignore-path .gitignore dist --write \"**/*.+(js|ts|json|html)\""
+    "format": "prettier --ignore-path .gitignore dist --write \"**/*.+(js|ts|json|html)\"",
+    "generate:theme": "node scripts/generateTailwindTheme.js"
   },
   "keywords": [
     "tailwind",
@@ -61,10 +62,9 @@
     "typescript-eslint": "^8.4.0"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.20",
     "handlebars": "^4.7.8",
     "juice": "^11.0.0",
     "postcss": "^8.4.43",
-    "tailwindcss": "^3.4.10"
+    "tailwindcss": "^4.3.5"
   }
 }

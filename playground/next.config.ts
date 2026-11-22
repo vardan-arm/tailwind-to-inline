@@ -1,9 +1,12 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['tailwind-to-inline'],
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  experimental: {
+    // The playground uses the package's source from the repository root, so it always runs the latest code
+    externalDir: true,
   },
 };
 
